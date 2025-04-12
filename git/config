@@ -1,0 +1,153 @@
+[user]
+    # These will be overridden by local.zsh
+    name = Your Name
+    email = your.email@example.com
+
+[core]
+    editor = nvim
+    pager = less -F -X
+    excludesfile = ~/.config/git/ignore
+    autocrlf = input
+    whitespace = fix,-indent-with-non-tab,trailing-space,cr-at-eol
+
+[init]
+    defaultBranch = main
+
+[push]
+    default = current
+    followTags = true
+
+[pull]
+    rebase = true
+
+[rebase]
+    autoStash = true
+    autoSquash = true
+
+[merge]
+    tool = vimdiff
+    ff = false
+    commit = no
+
+[color]
+    ui = auto
+    diff = auto
+    status = auto
+    branch = auto
+    interactive = auto
+
+[color "diff"]
+    meta = yellow
+    frag = magenta
+    old = red
+    new = green
+    whitespace = red reverse
+
+[color "branch"]
+    current = yellow reverse
+    local = yellow
+    remote = green
+
+[color "status"]
+    added = green
+    changed = yellow
+    untracked = red
+
+[alias]
+    # View abbreviated SHA, description, and history graph
+    lg = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
+    
+    # View abbreviated SHA and description
+    l = log --pretty=format:"%C(yellow)%h%Cred%d\\ %Creset%s%Cblue\\ [%cn]" --decorate --numstat
+    
+    # View the current working tree status using the short format
+    s = status -s
+    
+    # Show the diff between the latest commit and the current state
+    d = !"git diff-index --quiet HEAD -- || clear; git --no-pager diff --patch-with-stat"
+    
+    # `git di $number` shows the diff between the state `$number` revisions ago and the current state
+    di = !"d() { git diff --patch-with-stat HEAD~$1; }; git diff-index --quiet HEAD -- || clear; d"
+    
+    # Pull with rebase
+    pr = pull --rebase
+    
+    # List all branches
+    b = branch -a
+    
+    # Create and checkout a new branch
+    nb = checkout -b
+    
+    # Delete a branch
+    bd = branch -D
+    
+    # List all remotes
+    r = remote -v
+    
+    # Add a remote
+    ra = remote add
+    
+    # Remove a remote
+    rr = remote remove
+    
+    # Show commit history for a file
+    f = "!git log --pretty=format: --name-only | sort | uniq -c | sort -rg | head -10"
+    
+    # Show who changed what and when in a file
+    blame = blame -w -M -C -C -C
+    
+    # Show changes in the working tree
+    w = show --pretty=format: --name-only
+    
+    # Show changes in the staging area
+    c = diff --cached
+    
+    # Amend the last commit
+    amend = commit --amend -C HEAD
+    
+    # Reset the last commit
+    undo = reset HEAD~1 --mixed
+    
+    # Interactive rebase with the given number of latest commits
+    ri = "!r() { git rebase -i HEAD~$1; }; r"
+    
+    # List all aliases
+    la = "!git config -l | grep alias | cut -c 7-"
+    
+    # Show verbose output about tags, branches or remotes
+    tags = tag -l
+    branches = branch -a
+    remotes = remote -v
+    
+    # Show the diff between the latest commit and the current state
+    last = log -1 HEAD
+    
+    # Show the diff between the latest commit and the current state
+    difflast = diff HEAD~1
+    
+    # Show the diff between the latest commit and the current state
+    showlast = show HEAD
+    
+    # Show the diff between the latest commit and the current state
+    unstage = reset HEAD
+    
+    # Show the diff between the latest commit and the current state
+    uncommit = reset --soft HEAD^
+    
+    # Show the diff between the latest commit and the current state
+    staged = diff --cached
+    
+    # Show the diff between the latest commit and the current state
+    unstaged = diff
+    
+    # Show the diff between the latest commit and the current state
+    lasttag = describe --tags --abbrev=0
+    
+    # Show the diff between the latest commit and the current state
+    lasttagdistance = describe --tags --abbrev=0 --long
+    
+    # Show the diff between the latest commit and the current state
+    lasttagcommit = rev-list --tags --max-count=1
+    
+    # Show the diff between the latest commit and the current state
+    lasttagdate = log -1 --format=%ai $(git describe --tags --abbrev=0) 

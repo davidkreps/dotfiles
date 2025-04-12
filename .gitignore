@@ -1,0 +1,29 @@
+# Local configuration files that shouldn't be tracked
+*.local
+local.zsh
+local.zsh.backup
+
+# Backup files created by install script
+*.backup
+
+# macOS specific files (needed here as they might be created during installation)
+.DS_Store
+.DS_Store?
+._*
+
+# Temporary files created during installation
+*.tmp
+*.bak
+
+# Editor directories and files
+.idea
+.vscode
+*.swp
+*.swo
+*~
+
+# OS generated files
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db 
