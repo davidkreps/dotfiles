@@ -21,8 +21,8 @@ echo "Creating symlinks..."
 echo "Processing $HOME/.config/zsh/.zshrc..."
 ln -sf "$SCRIPT_DIR/zsh/.zshrc" "$HOME/.config/zsh/.zshrc"
 
-echo "Processing $HOME/.config/zsh/.prompt.zsh..."
-ln -sf "$SCRIPT_DIR/zsh/.prompt.zsh" "$HOME/.config/zsh/.prompt.zsh"
+echo "Processing $HOME/.config/zsh/prompt.zsh..."
+ln -sf "$SCRIPT_DIR/zsh/prompt.zsh" "$HOME/.config/zsh/prompt.zsh"
 
 echo "Processing $HOME/.config/zsh/aliases.zsh..."
 ln -sf "$SCRIPT_DIR/zsh/aliases.zsh" "$HOME/.config/zsh/aliases.zsh"

@@ -57,11 +57,11 @@ bindkey '^e' edit-command-line
 echo "Loading shell configuration..."
 
 # Source prompt configuration
-if [ -f "$HOME/.config/zsh/.prompt.zsh" ]; then
+if [ -f "$HOME/.config/zsh/prompt.zsh" ]; then
     echo "Loading prompt configuration..."
-    source "$HOME/.config/zsh/.prompt.zsh"
+    source "$HOME/.config/zsh/prompt.zsh"
 else
-    echo "Warning: .prompt.zsh not found"
+    echo "Warning: prompt.zsh not found"
 fi
 
 # Load aliases if they exist
