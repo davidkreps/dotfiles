@@ -65,15 +65,6 @@ function httpcompression() {
     curl -s -w "%{size_download}\n" -o /dev/null -H "Accept-Encoding: gzip,deflate,sdch" "$1"
 }
 
-# Create a git.io short URL
-function gitio() {
-    if [ -z "${1}" -o -z "${2}" ]; then
-        echo "Usage: \`gitio slug url\`"
-        return 1
-    fi
-    curl -i https://git.io/ -F "url=${2}" -F "code=${1}"
-}
-
 # Start a new tmux session with a specific name
 function tm() {
     tmux new -s "$1"

@@ -9,9 +9,6 @@ setopt prompt_subst
 # Load VCS info module
 autoload -Uz vcs_info
 
-# Update VCS info before each prompt
-precmd() { vcs_info }
-
 # Configure Git integration
 zstyle ':vcs_info:*' enable git
 zstyle ':vcs_info:*' check-for-changes true
@@ -46,10 +43,11 @@ PROMPT='%F{cyan}%n%f@%F{green}%m%f:%F{yellow}%~%f${vcs_info_msg_0_} %(?.%F{green
 # - Exit status (if non-zero)
 # - Current time
 function precmd() {
+    local exit_code=$?
     vcs_info
-    if [[ $? -eq 0 ]]; then
+    if [[ $exit_code -eq 0 ]]; then
         RPROMPT='%F{blue}%T%f'
     else
-        RPROMPT='%F{red}%? %F{blue}%T%f'
+        RPROMPT="%F{red}${exit_code} %F{blue}%T%f"
     fi
 } 
