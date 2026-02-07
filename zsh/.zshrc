@@ -96,4 +96,7 @@ export NVM_DIR="$HOME/.nvm"
 # npm configuration
 export PATH="$HOME/.npm-global/bin:$PATH"
 
-echo "Shell configuration loaded!" 
+# Add VSCode to the path
+export PATH="/Applications/Visual Studio Code.app/Contents/Resources/app/bin:$PATH"
+
+echo "Shell configuration loaded!"
