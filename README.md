@@ -1,34 +1,39 @@
-# My Dotfiles
+# Dotfiles
 
-This repository contains my personal dotfiles and configuration files for my development environment.
-
-## Overview
-
-This repository contains configuration files for various tools and applications I use in my development workflow, including:
-
-- Shell configuration (zsh)
-- Editor configurations
-- Git configuration
-- And more...
+Personal dotfiles. XDG-compliant configs installed via symlinks to `~/.config/`.
 
 ## Installation
 
-To install these dotfiles, run:
-
 ```bash
+git clone <repo-url> ~/dotfiles
+cd ~/dotfiles
 ./install.sh
 ```
 
-This will create symbolic links from your home directory to the files in this repository.
+The installer will:
+- Create `~/.config/zsh/` and `~/.config/git/` directories
+- Symlink config files from the repo into `~/.config/`
+- Create a `~/.zshrc` compatibility symlink
+- Create `~/.config/zsh/local.zsh` for machine-specific settings (if it doesn't exist)
+- Prompt for your git identity (name and email) if not already configured
+
+Safe to run multiple times — existing `local.zsh` content is preserved.
 
 ## Structure
 
-- `zsh/` - Zsh configuration files
-- `git/` - Git configuration files
-- `vim/` - Vim configuration files
-- `install.sh` - Installation script
-- `README.md` - This file
+- `zsh/` — Zsh configuration (aliases, functions, prompt, vi mode)
+- `git/` — Git configuration (aliases, colors, global ignore)
+- `install.sh` — Idempotent installation script
+- `test.sh` — Automated test suite
+
+## Testing
+
+```bash
+./test.sh
+```
+
+Validates installation, shell config, git config, and file hygiene in an isolated temp environment.
 
 ## License
 
-MIT 
+MIT
