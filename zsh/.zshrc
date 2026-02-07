@@ -96,7 +96,9 @@ export NVM_DIR="$HOME/.nvm"
 # npm configuration
 export PATH="$HOME/.npm-global/bin:$PATH"
 
-# Add VSCode to the path
-export PATH="/Applications/Visual Studio Code.app/Contents/Resources/app/bin:$PATH"
+# Add VSCode to the path (macOS only; Linux installs code to a standard PATH location)
+if [[ "$OSTYPE" == darwin* ]] && [ -d "/Applications/Visual Studio Code.app" ]; then
+    export PATH="/Applications/Visual Studio Code.app/Contents/Resources/app/bin:$PATH"
+fi
 
 echo "Shell configuration loaded!"
