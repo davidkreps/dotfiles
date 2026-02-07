@@ -50,7 +50,7 @@ alias nv='nvim'
 
 # Docker
 alias d='docker'
-alias dc='docker-compose'
+alias dc='docker compose'
 alias dps='docker ps'
 alias dim='docker images'
 
