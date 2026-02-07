@@ -146,4 +146,4 @@
     lasttagcommit = rev-list --tags --max-count=1
 
     # Show the date of the most recent tag
-    lasttagdate = log -1 --format=%ai $(git describe --tags --abbrev=0) 
+    lasttagdate = log -1 --format=%ai $(git describe --tags --abbrev=0)

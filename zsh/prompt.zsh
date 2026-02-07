@@ -50,4 +50,4 @@ function precmd() {
     else
         RPROMPT="%F{red}${exit_code} %F{blue}%T%f"
     fi
-} 
+}

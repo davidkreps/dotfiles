@@ -74,4 +74,4 @@ fi
 
 echo ""
 echo "Dotfiles installation complete!"
-echo "Please restart your terminal or run 'source ~/.zshrc' to apply changes." 
+echo "Please restart your terminal or run 'source ~/.zshrc' to apply changes."

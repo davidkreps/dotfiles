@@ -119,4 +119,4 @@ function reload() {
     autoload -Uz vcs_info
     
     echo "Shell configuration reloaded!"
-} 
+}
