@@ -12,7 +12,6 @@ echo "Installing dotfiles from $SCRIPT_DIR..."
 echo "Creating configuration directories..."
 mkdir -p "$HOME/.config/zsh"
 mkdir -p "$HOME/.config/git"
-mkdir -p "$HOME/.config/nvim"
 
 # Create symlinks
 echo "Creating symlinks..."
@@ -39,14 +38,6 @@ ln -sf "$SCRIPT_DIR/git/config" "$HOME/.config/git/config"
 
 echo "Processing $HOME/.config/git/ignore..."
 ln -sf "$SCRIPT_DIR/git/ignore" "$HOME/.config/git/ignore"
-
-# Neovim configuration
-echo "Processing $HOME/.config/nvim/init.vim..."
-if [ -f "$SCRIPT_DIR/nvim/init.vim" ]; then
-    ln -sf "$SCRIPT_DIR/nvim/init.vim" "$HOME/.config/nvim/init.vim"
-else
-    echo "Warning: $SCRIPT_DIR/nvim/init.vim does not exist! Skipping..."
-fi
 
 # Create compatibility symlinks
 echo "Creating compatibility symlinks..."
