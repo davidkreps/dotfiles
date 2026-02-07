@@ -33,7 +33,9 @@ alias gaa='git add --all'
 # System
 alias df='df -h'
 alias du='du -h'
-alias free='free -m'
+if [[ "$OSTYPE" != darwin* ]]; then
+    alias free='free -m'
+fi
 alias more='less'
 alias psg='ps aux | grep -v grep | grep -i'
 
