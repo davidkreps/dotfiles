@@ -88,4 +88,4 @@ alias nowtime=now
 alias nowdate='date +"%d-%m-%Y"' 
 
 # Claude
-alias claude="$HOME/.claude/local/claude"
+[ -x "$HOME/.claude/local/claude" ] && alias claude="$HOME/.claude/local/claude"
