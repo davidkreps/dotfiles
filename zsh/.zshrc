@@ -11,21 +11,25 @@ setopt hist_ignore_all_dups
 setopt hist_ignore_space
 
 # Basic auto/tab complete
-autoload -U compinit
-zstyle ':completion:*' menu select
-zmodload zsh/complist
-compinit
-_comp_options+=(globdots)		# Include hidden files
+if [[ -o interactive ]]; then
+    autoload -U compinit
+    zstyle ':completion:*' menu select
+    zmodload zsh/complist
+    compinit
+    _comp_options+=(globdots)		# Include hidden files
+fi
 
 # vi mode
 bindkey -v
 export KEYTIMEOUT=1
 
 # Use vim keys in tab complete menu
-bindkey -M menuselect 'h' vi-backward-char
-bindkey -M menuselect 'k' vi-up-line-or-history
-bindkey -M menuselect 'l' vi-forward-char
-bindkey -M menuselect 'j' vi-down-line-or-history
+if [[ -o interactive ]]; then
+    bindkey -M menuselect 'h' vi-backward-char
+    bindkey -M menuselect 'k' vi-up-line-or-history
+    bindkey -M menuselect 'l' vi-forward-char
+    bindkey -M menuselect 'j' vi-down-line-or-history
+fi
 bindkey -v '^?' backward-delete-char
 
 # Change cursor shape for different vi modes
