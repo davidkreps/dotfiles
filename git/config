@@ -115,35 +115,35 @@
     branches = branch -a
     remotes = remote -v
     
-    # Show the diff between the latest commit and the current state
+    # Show the last commit
     last = log -1 HEAD
-    
-    # Show the diff between the latest commit and the current state
+
+    # Diff against the previous commit
     difflast = diff HEAD~1
-    
-    # Show the diff between the latest commit and the current state
+
+    # Show the previous commit's full details
     showlast = show HEAD
-    
-    # Show the diff between the latest commit and the current state
+
+    # Unstage files from the index
     unstage = reset HEAD
-    
-    # Show the diff between the latest commit and the current state
+
+    # Undo the last commit, keeping changes staged
     uncommit = reset --soft HEAD^
-    
-    # Show the diff between the latest commit and the current state
+
+    # Show staged changes
     staged = diff --cached
-    
-    # Show the diff between the latest commit and the current state
+
+    # Show unstaged changes
     unstaged = diff
-    
-    # Show the diff between the latest commit and the current state
+
+    # Show the most recent tag
     lasttag = describe --tags --abbrev=0
-    
-    # Show the diff between the latest commit and the current state
+
+    # Show the most recent tag with distance from HEAD
     lasttagdistance = describe --tags --abbrev=0 --long
-    
-    # Show the diff between the latest commit and the current state
+
+    # Show the commit SHA of the most recent tag
     lasttagcommit = rev-list --tags --max-count=1
-    
-    # Show the diff between the latest commit and the current state
+
+    # Show the date of the most recent tag
     lasttagdate = log -1 --format=%ai $(git describe --tags --abbrev=0) 
