@@ -72,7 +72,11 @@ if [[ "$OSTYPE" == darwin* ]]; then
 else
     alias localip="hostname -I | awk '{print \$1}'"
 fi
-alias ports='netstat -tulanp'
+if [[ "$OSTYPE" == darwin* ]]; then
+    alias ports='netstat -an -ptcp'
+else
+    alias ports='netstat -tulanp'
+fi
 
 # Misc
 alias c='clear'
