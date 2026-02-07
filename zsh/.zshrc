@@ -54,39 +54,10 @@ autoload edit-command-line; zle -N edit-command-line
 bindkey '^e' edit-command-line
 
 # Load configuration files
-echo "Loading shell configuration..."
-
-# Source prompt configuration
-if [ -f "$HOME/.config/zsh/prompt.zsh" ]; then
-    echo "Loading prompt configuration..."
-    source "$HOME/.config/zsh/prompt.zsh"
-else
-    echo "Warning: prompt.zsh not found"
-fi
-
-# Load aliases if they exist
-if [ -f "$HOME/.config/zsh/aliases.zsh" ]; then
-    echo "Loading aliases..."
-    source "$HOME/.config/zsh/aliases.zsh"
-else
-    echo "Warning: aliases.zsh not found"
-fi
-
-# Load functions if they exist
-if [ -f "$HOME/.config/zsh/functions.zsh" ]; then
-    echo "Loading functions..."
-    source "$HOME/.config/zsh/functions.zsh"
-else
-    echo "Warning: functions.zsh not found"
-fi
-
-# Load local configuration if it exists
-if [ -f "$HOME/.config/zsh/local.zsh" ]; then
-    echo "Loading local configuration..."
-    source "$HOME/.config/zsh/local.zsh"
-else
-    echo "Info: local.zsh not found (this is normal for new installations)"
-fi
+[ -f "$HOME/.config/zsh/prompt.zsh" ] && source "$HOME/.config/zsh/prompt.zsh"
+[ -f "$HOME/.config/zsh/aliases.zsh" ] && source "$HOME/.config/zsh/aliases.zsh"
+[ -f "$HOME/.config/zsh/functions.zsh" ] && source "$HOME/.config/zsh/functions.zsh"
+[ -f "$HOME/.config/zsh/local.zsh" ] && source "$HOME/.config/zsh/local.zsh"
 
 # NVM and npm configuration
 export NVM_DIR="$HOME/.nvm"
@@ -101,4 +72,3 @@ if [[ "$OSTYPE" == darwin* ]] && [ -d "/Applications/Visual Studio Code.app" ]; 
     export PATH="/Applications/Visual Studio Code.app/Contents/Resources/app/bin:$PATH"
 fi
 
-echo "Shell configuration loaded!"
