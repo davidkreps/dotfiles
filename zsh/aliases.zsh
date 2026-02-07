@@ -67,7 +67,11 @@ alias venv='python3 -m venv'
 
 # Network
 alias myip='curl -s https://ipinfo.io/ip'
-alias localip='ipconfig getifaddr en0'
+if [[ "$OSTYPE" == darwin* ]]; then
+    alias localip='ipconfig getifaddr en0'
+else
+    alias localip="hostname -I | awk '{print \$1}'"
+fi
 alias ports='netstat -tulanp'
 
 # Misc
