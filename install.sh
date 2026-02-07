@@ -29,8 +29,14 @@ ln -sf "$SCRIPT_DIR/zsh/aliases.zsh" "$HOME/.config/zsh/aliases.zsh"
 echo "Processing $HOME/.config/zsh/functions.zsh..."
 ln -sf "$SCRIPT_DIR/zsh/functions.zsh" "$HOME/.config/zsh/functions.zsh"
 
-echo "Processing $HOME/.config/zsh/local.zsh..."
-ln -sf "$SCRIPT_DIR/zsh/local.zsh" "$HOME/.config/zsh/local.zsh"
+# Create local.zsh if it doesn't exist (not symlinked — this is a per-machine file)
+if [ ! -f "$HOME/.config/zsh/local.zsh" ]; then
+    echo "Creating $HOME/.config/zsh/local.zsh..."
+    cat > "$HOME/.config/zsh/local.zsh" << 'LOCALEOF'
+# Machine-specific settings (not version controlled)
+# Add aliases, functions, environment variables, PATH additions, etc.
+LOCALEOF
+fi
 
 # Git configuration
 echo "Processing $HOME/.config/git/config..."
