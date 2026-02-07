@@ -3,10 +3,12 @@ function mkd() {
     mkdir -p "$@" && cd "$@"
 }
 
-# Change working directory to the top-most Finder window location
-function cdf() {
-    cd "$(osascript -e 'tell app "Finder" to POSIX path of (insertion location as alias)')"
-}
+# Change working directory to the top-most Finder window location (macOS only)
+if [[ "$OSTYPE" == darwin* ]]; then
+    function cdf() {
+        cd "$(osascript -e 'tell app "Finder" to POSIX path of (insertion location as alias)')"
+    }
+fi
 
 # Create a .tar.gz archive
 function targz() {
