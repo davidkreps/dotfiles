@@ -55,5 +55,26 @@ echo "Creating compatibility symlinks..."
 echo "Creating .zshrc symlink in home directory..."
 ln -sf "$HOME/.config/zsh/.zshrc" "$HOME/.zshrc"
 
+# Configure git identity if not already set
+CURRENT_NAME=$(git config --global user.name 2>/dev/null || true)
+CURRENT_EMAIL=$(git config --global user.email 2>/dev/null || true)
+
+if [ -z "$CURRENT_NAME" ] || [ -z "$CURRENT_EMAIL" ]; then
+    echo ""
+    echo "Git identity not configured. Let's set it up."
+    if [ -z "$CURRENT_NAME" ]; then
+        printf "Enter your full name for git commits: "
+        read GIT_NAME
+        git config --global user.name "$GIT_NAME"
+    fi
+    if [ -z "$CURRENT_EMAIL" ]; then
+        printf "Enter your email for git commits: "
+        read GIT_EMAIL
+        git config --global user.email "$GIT_EMAIL"
+    fi
+    echo "Git identity configured."
+fi
+
+echo ""
 echo "Dotfiles installation complete!"
 echo "Please restart your terminal or run 'source ~/.zshrc' to apply changes." 
