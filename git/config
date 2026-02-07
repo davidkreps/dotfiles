@@ -1,5 +1,5 @@
 [core]
-    editor = nvim
+    editor = vim
     pager = less -F -X
     excludesfile = ~/.config/git/ignore
     autocrlf = input
@@ -21,6 +21,7 @@
 
 [merge]
     tool = vimdiff
+    # Override to nvimdiff in local git config if nvim is preferred
     ff = false
     commit = no
 
