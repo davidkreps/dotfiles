@@ -47,12 +47,26 @@ function dataurl() {
 }
 
 # Start a PHP server from a directory
-function phpserver() {
-    local port="${1:-4000}"
-    local ip=$(ipconfig getifaddr en0)
-    sleep 1 && open "http://${ip}:${port}/" &
-    php -S "${ip}:${port}"
-}
+if command -v php &>/dev/null; then
+    function phpserver() {
+        local port="${1:-4000}"
+        local ip
+        if [[ "$OSTYPE" == darwin* ]]; then
+            ip=$(ipconfig getifaddr en0)
+        else
+            ip=$(hostname -I | awk '{print $1}')
+        fi
+        php -S "${ip}:${port}" &
+        sleep 1
+        if [[ "$OSTYPE" == darwin* ]]; then
+            open "http://${ip}:${port}/"
+        elif command -v xdg-open &>/dev/null; then
+            xdg-open "http://${ip}:${port}/"
+        else
+            echo "Server running at http://${ip}:${port}/"
+        fi
+    }
+fi
 
 # Get gzipped file size
 function gz() {
