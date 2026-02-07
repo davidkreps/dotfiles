@@ -9,8 +9,12 @@ alias -- -='cd -'
 alias l='ls -lah'
 alias la='ls -lAh'
 alias ll='ls -lh'
-alias ls='ls -G'
 alias lsa='ls -lah'
+if [[ "$OSTYPE" == darwin* ]]; then
+    alias ls='ls -G'
+else
+    alias ls='ls --color=auto'
+fi
 
 # Git
 alias g='git'
