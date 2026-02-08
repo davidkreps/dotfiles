@@ -52,9 +52,12 @@ echo "Creating compatibility symlinks..."
 echo "Creating .zshrc symlink in home directory..."
 ln -sf "$HOME/.config/zsh/.zshrc" "$HOME/.zshrc"
 
-# Configure git identity if not already set
-CURRENT_NAME=$(git config --global user.name 2>/dev/null || true)
-CURRENT_EMAIL=$(git config --global user.email 2>/dev/null || true)
+# Configure git identity in local (untracked) config file
+GIT_LOCAL="$HOME/.config/git/local"
+
+# Read current identity from the merged config (includes the local file)
+CURRENT_NAME=$(git config user.name 2>/dev/null || true)
+CURRENT_EMAIL=$(git config user.email 2>/dev/null || true)
 
 if [ -z "$CURRENT_NAME" ] || [ -z "$CURRENT_EMAIL" ]; then
     echo ""
@@ -62,14 +65,26 @@ if [ -z "$CURRENT_NAME" ] || [ -z "$CURRENT_EMAIL" ]; then
     if [ -z "$CURRENT_NAME" ]; then
         printf "Enter your full name for git commits: "
         read GIT_NAME
-        git config --global user.name "$GIT_NAME"
     fi
     if [ -z "$CURRENT_EMAIL" ]; then
         printf "Enter your email for git commits: "
         read GIT_EMAIL
-        git config --global user.email "$GIT_EMAIL"
     fi
-    echo "Git identity configured."
+
+    # Create git/local if it doesn't exist
+    if [ ! -f "$GIT_LOCAL" ]; then
+        cat > "$GIT_LOCAL" << 'GITLOCALEOF'
+# Machine-specific git settings (not version controlled)
+GITLOCALEOF
+    fi
+
+    # Append identity to git/local
+    {
+        echo "[user]"
+        [ -n "${GIT_NAME:-}" ] && printf "    name = %s\n" "$GIT_NAME"
+        [ -n "${GIT_EMAIL:-}" ] && printf "    email = %s\n" "$GIT_EMAIL"
+    } >> "$GIT_LOCAL"
+    echo "Git identity configured in $GIT_LOCAL."
 fi
 
 echo ""

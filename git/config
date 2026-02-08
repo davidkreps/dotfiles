@@ -5,6 +5,9 @@
     autocrlf = input
     whitespace = fix,-indent-with-non-tab,trailing-space,cr-at-eol
 
+[include]
+    path = ~/.config/git/local
+
 [init]
     defaultBranch = main
 

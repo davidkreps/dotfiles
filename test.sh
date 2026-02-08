@@ -110,14 +110,50 @@ assert_empty() {
 # ─── Setup / Teardown ────────────────────────────────────────────────
 
 TEMP_HOME=""
+REPO_SNAPSHOT=""
+
+# Repo files that get symlinked into ~/.config (write-through targets)
+SYMLINK_TARGETS=(
+    "zsh/.zshrc"
+    "zsh/prompt.zsh"
+    "zsh/aliases.zsh"
+    "zsh/functions.zsh"
+    "git/config"
+    "git/ignore"
+)
+
+snapshot_repo_files() {
+    local snapshot_file="$1"
+    local f
+    for f in "${SYMLINK_TARGETS[@]}"; do
+        shasum "$REPO_DIR/$f"
+    done > "$snapshot_file"
+}
+
+assert_repo_unchanged() {
+    local before="$1" label="$2"
+    local after
+    after=$(mktemp)
+    local f
+    for f in "${SYMLINK_TARGETS[@]}"; do
+        shasum "$REPO_DIR/$f"
+    done > "$after"
+    if diff -q "$before" "$after" > /dev/null 2>&1; then
+        pass "$label"
+    else
+        local changed
+        changed=$(diff "$before" "$after" | grep '^>' | sed 's/.*  /  /')
+        fail "$label" "repo files modified:$changed"
+    fi
+    rm -f "$after"
+}
 
 setup() {
     TEMP_HOME=$(mktemp -d)
+    REPO_SNAPSHOT=$(mktemp)
+    snapshot_repo_files "$REPO_SNAPSHOT"
     export HOME="$TEMP_HOME"
     export XDG_CONFIG_HOME="$HOME/.config"
-    # Redirect git --global writes to a file in temp HOME so they don't
-    # flow through the symlinked git/config back into the repo.
-    export GIT_CONFIG_GLOBAL="$TEMP_HOME/.gitconfig"
     # Provide git identity via stdin so install.sh doesn't block
     printf 'Test User\ntest@example.com\n' | bash "$REPO_DIR/install.sh" > /dev/null 2>&1
 }
@@ -126,6 +162,7 @@ teardown() {
     if [ -n "$TEMP_HOME" ] && [ -d "$TEMP_HOME" ]; then
         rm -rf "$TEMP_HOME"
     fi
+    [ -n "$REPO_SNAPSHOT" ] && rm -f "$REPO_SNAPSHOT"
 }
 
 trap teardown EXIT
@@ -155,19 +192,34 @@ test_installation() {
     # local.zsh is a real file, not a symlink
     assert_not_symlink "$HOME/.config/zsh/local.zsh" "local.zsh is a regular file"
 
-    # Git identity was configured
+    # git/local is a real file, not a symlink
+    assert_not_symlink "$HOME/.config/git/local" "git/local is a regular file"
+
+    # No symlink write-through after initial install
+    assert_repo_unchanged "$REPO_SNAPSHOT" "install.sh did not modify repo source files"
+
+    # Git identity was written to git/local
     local git_name
-    git_name=$(git config --global user.name 2>/dev/null || true)
-    assert_eq "$git_name" "Test User" "git user.name was configured"
+    git_name=$(git config --file "$HOME/.config/git/local" user.name 2>/dev/null || true)
+    assert_eq "$git_name" "Test User" "git user.name was configured in git/local"
 
     # Idempotency — run install.sh again
     echo "# custom local setting" >> "$HOME/.config/zsh/local.zsh"
-    printf 'Test User\ntest@example.com\n' | bash "$REPO_DIR/install.sh" > /dev/null 2>&1
+    echo "# custom git setting" >> "$HOME/.config/git/local"
+    bash "$REPO_DIR/install.sh" > /dev/null 2>&1
 
     # local.zsh content preserved
     local local_content
     local_content=$(cat "$HOME/.config/zsh/local.zsh")
     assert_contains "$local_content" "# custom local setting" "idempotency: local.zsh content preserved"
+
+    # git/local content preserved and identity not duplicated
+    local git_local_content
+    git_local_content=$(cat "$HOME/.config/git/local")
+    assert_contains "$git_local_content" "# custom git setting" "idempotency: git/local content preserved"
+
+    # No symlink write-through after idempotency re-run
+    assert_repo_unchanged "$REPO_SNAPSHOT" "idempotency: no repo source files modified"
 
     # Symlinks still correct after re-run
     assert_symlink_to "$HOME/.config/zsh/.zshrc" "$REPO_DIR/zsh/.zshrc" "idempotency: symlinks still correct"
