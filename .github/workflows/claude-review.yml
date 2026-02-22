@@ -1,0 +1,37 @@
+name: Claude PR Review
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          track_progress: true
+          prompt: |
+            Please review this pull request against the conventions in CLAUDE.md.
+
+            Focus on:
+            - Shell portability — does it work on both macOS and Linux?
+            - Idempotency — is install.sh safe to run multiple times?
+            - Security — no credentials, API keys, or secrets committed
+            - OS/tool guards — platform-specific code behind `[[ "$OSTYPE" == darwin* ]]`, tool-specific behind `command -v`
+            - Stdout cleanliness — no output produced during non-interactive shell init (breaks scp/rsync)
+            - Trailing newlines — all files must end with one
+            - install.sh consistency — new config files have a corresponding symlink
+            - test.sh coverage — new symlinks or config files have tests
+
+            Use `gh pr comment` for top-level feedback and inline comments for specific line issues.
+          claude_args: |
+            --allowedTools "mcp__github_inline_comment__create_inline_comment,Bash(gh pr comment:*),Bash(gh pr diff:*),Bash(gh pr view:*)"
