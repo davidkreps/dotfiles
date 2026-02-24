@@ -133,7 +133,7 @@ function reload() {
             echo "    current: $cur_val"
             echo "    new:     $new_val"
             printf "  Overwrite? [y/N] "
-            read reply
+            read -r reply
             echo
             [[ "$reply" != [yY] ]] && restore_map[$aname]="$cur_val"
         done
