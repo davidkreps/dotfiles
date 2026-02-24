@@ -104,19 +104,61 @@ function tk() {
 # Reload the shell configuration
 function reload() {
     echo "Reloading shell configuration..."
-    
-    # Source all configuration files
+
+    local alias_file="$HOME/.config/zsh/aliases.zsh"
+    local -A new_aliases restore_map
+    local aname aval new_val cur_def cur_val reply line
+
+    if [[ -f "$alias_file" ]]; then
+        # Determine which aliases the file will define (subshell inherits env for OS checks)
+        while IFS= read -r line; do
+            line="${line#-- }"         # strip -- prefix used for names starting with -
+            aname="${line%%=*}"
+            aval="${line#*=}"
+            aval="${aval#\'}" ; aval="${aval%\'}"  # strip surrounding single quotes
+            [[ -n "$aname" ]] && new_aliases[$aname]="$aval"
+        done < <(zsh -c "source '$alias_file' 2>/dev/null; alias -L" 2>/dev/null | sed 's/^alias //')
+
+        # Prompt before overwriting any alias currently set to a different value
+        for aname in "${(@k)new_aliases}"; do
+            new_val="${new_aliases[$aname]}"
+            cur_def=$(alias -- "$aname" 2>/dev/null)
+            [[ -z "$cur_def" ]] && continue
+            cur_val="${cur_def#*=}"
+            cur_val="${cur_val#\'}" ; cur_val="${cur_val%\'}"
+            [[ "$cur_val" == "$new_val" ]] && continue
+
+            echo ""
+            echo "  Alias '$aname' will change:"
+            echo "    current: $cur_val"
+            echo "    new:     $new_val"
+            printf "  Overwrite? [y/N] "
+            read reply
+            echo
+            [[ "$reply" != [yY] ]] && restore_map[$aname]="$cur_val"
+        done
+
+        # Unalias only the managed set (skip any the user declined to overwrite)
+        for aname in "${(@k)new_aliases}"; do
+            (( ${+restore_map[$aname]} )) && continue
+            unalias -- "$aname" 2>/dev/null
+        done
+    fi
+
+    # Source main config (which sources aliases.zsh, functions.zsh, local.zsh)
     source "$HOME/.config/zsh/.zshrc"
-    [ -f "$HOME/.config/zsh/aliases.zsh" ] && source "$HOME/.config/zsh/aliases.zsh"
-    [ -f "$HOME/.config/zsh/functions.zsh" ] && source "$HOME/.config/zsh/functions.zsh"
-    [ -f "$HOME/.config/zsh/local.zsh" ] && source "$HOME/.config/zsh/local.zsh"
-    
+
+    # Restore any aliases the user chose not to overwrite
+    for aname in "${(@k)restore_map}"; do
+        alias -- "$aname=${restore_map[$aname]}"
+    done
+
     # Re-initialize completion
     autoload -U compinit
     compinit
-    
+
     # Re-initialize vcs_info
     autoload -Uz vcs_info
-    
+
     echo "Shell configuration reloaded!"
 }
