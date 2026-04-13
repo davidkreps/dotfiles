@@ -86,6 +86,3 @@ alias path='echo -e ${PATH//:/\\n}'
 alias now='date +"%T"'
 alias nowtime=now
 alias nowdate='date +"%d-%m-%Y"' 
-
-# Claude
-[ -x "$HOME/.claude/local/claude" ] && alias claude="$HOME/.claude/local/claude"
