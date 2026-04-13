@@ -25,8 +25,6 @@
 [merge]
     tool = vimdiff
     # Override to nvimdiff in local git config if nvim is preferred
-    ff = false
-    commit = no
 
 [color]
     ui = auto

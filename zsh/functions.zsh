@@ -50,20 +50,14 @@ function dataurl() {
 if command -v php &>/dev/null; then
     function phpserver() {
         local port="${1:-4000}"
-        local ip
-        if [[ "$OSTYPE" == darwin* ]]; then
-            ip=$(ipconfig getifaddr en0)
-        else
-            ip=$(hostname -I | awk '{print $1}')
-        fi
-        php -S "${ip}:${port}" &
+        php -S "127.0.0.1:${port}" &
         sleep 1
         if [[ "$OSTYPE" == darwin* ]]; then
-            open "http://${ip}:${port}/"
+            open "http://127.0.0.1:${port}/"
         elif command -v xdg-open &>/dev/null; then
-            xdg-open "http://${ip}:${port}/"
+            xdg-open "http://127.0.0.1:${port}/"
         else
-            echo "Server running at http://${ip}:${port}/"
+            echo "Server running at http://127.0.0.1:${port}/"
         fi
     }
 fi

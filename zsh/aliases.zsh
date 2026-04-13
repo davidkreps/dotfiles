@@ -49,7 +49,6 @@ alias v='vim'
 alias nv='nvim'
 
 # Docker
-alias d='docker'
 alias dc='docker compose'
 alias dps='docker ps'
 alias dim='docker images'
@@ -62,11 +61,10 @@ alias kl='kubectl logs'
 
 # Python
 alias py='python3'
-alias pip='pip3'
 alias venv='python3 -m venv'
 
 # Network
-alias myip='curl -s https://ipinfo.io/ip'
+alias myip='curl -s https://ipinfo.io/ip' # contacts third-party service
 if [[ "$OSTYPE" == darwin* ]]; then
     alias localip='ipconfig getifaddr en0'
 else
