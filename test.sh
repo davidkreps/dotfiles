@@ -320,6 +320,85 @@ test_file_hygiene() {
     fi
 }
 
+test_reload() {
+    printf "\n${BOLD}reload() tests${RESET}\n"
+
+    # Basic smoke test: reload exits cleanly with no conflicts
+    local exit_code output
+    output=$(HOME="$TEMP_HOME" zsh -c '
+        source "$HOME/.config/zsh/.zshrc"
+        reload
+    ' 2>&1)
+    exit_code=$?
+    assert_eq "$exit_code" "0" "reload() exits successfully with no conflicts"
+    assert_contains "$output" "Shell configuration reloaded!" "reload() prints completion message"
+
+    # Aliases defined in aliases.zsh are set after reload
+    local alias_val
+    alias_val=$(HOME="$TEMP_HOME" zsh -c '
+        source "$HOME/.config/zsh/.zshrc"
+        reload > /dev/null 2>&1
+        alias ll 2>/dev/null
+    ' 2>/dev/null)
+    assert_contains "$alias_val" "ll=" "reload() restores managed aliases"
+
+    # Unmanaged aliases (manually set, not in aliases.zsh) survive reload
+    alias_val=$(HOME="$TEMP_HOME" zsh -c '
+        source "$HOME/.config/zsh/.zshrc"
+        alias my_custom_alias="echo test-value"
+        reload > /dev/null 2>&1
+        alias my_custom_alias 2>/dev/null
+    ' 2>/dev/null)
+    assert_contains "$alias_val" "test-value" "reload() preserves unmanaged aliases"
+
+    # No prompt when alias value is unchanged
+    local prompt_output
+    prompt_output=$(HOME="$TEMP_HOME" zsh -c '
+        source "$HOME/.config/zsh/.zshrc"
+        reload 2>&1
+    ')
+    if echo "$prompt_output" | grep -q "will change"; then
+        fail "reload() does not prompt for unchanged aliases" "got unexpected prompt: $prompt_output"
+    else
+        pass "reload() does not prompt for unchanged aliases"
+    fi
+
+    # Prompt shows current and new values when alias will change
+    local conflict_output
+    conflict_output=$(printf 'n\n' | HOME="$TEMP_HOME" zsh -c '
+        source "$HOME/.config/zsh/.zshrc"
+        alias ll="old-custom-value"
+        reload 2>&1
+    ' 2>&1)
+    assert_contains "$conflict_output" "current:" "reload() shows current value in conflict prompt"
+    assert_contains "$conflict_output" "new:" "reload() shows new value in conflict prompt"
+    assert_contains "$conflict_output" "old-custom-value" "reload() includes old alias in prompt"
+
+    # User declines overwrite: alias retains its current value
+    local retained_val
+    retained_val=$(printf 'n\n' | HOME="$TEMP_HOME" zsh -c '
+        source "$HOME/.config/zsh/.zshrc"
+        alias ll="my-preserved-value"
+        reload > /dev/null 2>&1
+        alias ll 2>/dev/null
+    ' 2>/dev/null)
+    assert_contains "$retained_val" "my-preserved-value" "reload() retains alias when user declines overwrite"
+
+    # User accepts overwrite: alias is updated to the config value
+    local updated_val
+    updated_val=$(printf 'y\n' | HOME="$TEMP_HOME" zsh -c '
+        source "$HOME/.config/zsh/.zshrc"
+        alias ll="my-old-value"
+        reload > /dev/null 2>&1
+        alias ll 2>/dev/null
+    ' 2>/dev/null)
+    if echo "$updated_val" | grep -q "my-old-value"; then
+        fail "reload() updates alias when user accepts overwrite" "old value still set: $updated_val"
+    else
+        assert_contains "$updated_val" "ll=" "reload() updates alias when user accepts overwrite"
+    fi
+}
+
 # ─── Run ──────────────────────────────────────────────────────────────
 
 printf "${BOLD}Running dotfiles tests...${RESET}\n"
@@ -329,6 +408,7 @@ test_installation
 test_shell_config
 test_git_config
 test_file_hygiene
+test_reload
 
 printf "\n${BOLD}Results:${RESET} ${GREEN}${PASS_COUNT} passed${RESET}, ${RED}${FAIL_COUNT} failed${RESET}\n"
 
