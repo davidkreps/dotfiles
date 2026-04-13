@@ -395,7 +395,7 @@ test_reload() {
     if echo "$updated_val" | grep -q "my-old-value"; then
         fail "reload() updates alias when user accepts overwrite" "old value still set: $updated_val"
     else
-        pass "reload() updates alias when user accepts overwrite"
+        assert_contains "$updated_val" "ll=" "reload() updates alias when user accepts overwrite"
     fi
 }
 

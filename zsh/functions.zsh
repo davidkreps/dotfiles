@@ -117,7 +117,7 @@ function reload() {
             aval="${line#*=}"
             aval="${aval#\'}" ; aval="${aval%\'}"  # strip surrounding single quotes
             [[ -n "$aname" ]] && new_aliases[$aname]="$aval"
-        done < <(zsh -c "source '$alias_file' 2>/dev/null; alias -L" 2>/dev/null | sed 's/^alias //')
+        done < <(zsh -c 'source "$1" 2>/dev/null; alias -L' -- "$alias_file" 2>/dev/null | sed 's/^alias //')
 
         # Prompt before overwriting any alias currently set to a different value
         for aname in "${(@k)new_aliases}"; do
@@ -133,7 +133,7 @@ function reload() {
             echo "    current: $cur_val"
             echo "    new:     $new_val"
             printf "  Overwrite? [y/N] "
-            read reply
+            read -r reply
             echo
             [[ "$reply" != [yY] ]] && restore_map[$aname]="$cur_val"
         done
